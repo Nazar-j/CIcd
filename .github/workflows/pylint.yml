@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create database and run migrations
+        run: |
+          python db.py -a  # Додає стандартні дані
+          python db.py -p  # Виводить усі дані для перевірки
+
+      - name: Build project
+        run: |
+          echo "Building the project..."
+          # В даному випадку "Build" може не потребувати спеціальних команд
+
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          python -m unittest discover -s . -p "test_*.py"
+          # Запускає всі тести, що відповідають шаблону "test_*.py"
+
+      - name: Update project code
+        run: |
+          echo "Updating project code..."
+          # Додайте команди для оновлення коду, якщо це потрібно
